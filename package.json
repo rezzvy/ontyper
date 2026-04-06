@@ -1,0 +1,37 @@
+{
+  "name": "ontyper",
+  "version": "1.0.0",
+  "description": "A directive-based typewriter for interactive web experiences.",
+  "type": "module",
+  "main": "dist/ontyper.esm.js",
+  "exports": {
+    ".": "./dist/ontyper.esm.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rezzvy/ontyper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rezzvy/ontyper/issues"
+  },
+  "homepage": "https://github.com/rezzvy/ontyper#readme",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build:browser": "esbuild ./src/index.browser.js --bundle --minify --platform=browser --format=iife --outfile=dist/ontyper.min.js",
+    "build:esm": "esbuild ./src/ontyper.js --bundle --minify --format=esm --outfile=dist/ontyper.esm.js",
+    "build": "npm run build:browser && npm run build:esm"
+  },
+  "keywords": [
+    "directive",
+    "typewriter",
+    "interactive",
+    "typing"
+  ],
+  "author": "rezzvy",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.27.4"
+  }
+}

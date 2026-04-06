@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OnTyper Functionality Test</title>
+    <style>
+      .wrapper {
+        min-height: 100px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      button {
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <button id="btn-pause">Pause</button>
+      <button id="btn-resume">Resume</button>
+      <button id="btn-skip">Skip</button>
+      <button id="btn-destroy">Destroy</button>
+    </div>
+
+    <br />
+    <div class="wrapper"></div>
+    <div id="status">Status: Idle</div>
+
+    <script src="../dist/ontyper.min.js"></script>
+    <script>
+      const el = document.querySelector(".wrapper");
+      const statusEl = document.querySelector("#status");
+
+      const typer = new OnTyper({
+        target: el,
+        speed: 30,
+        onStart: (api) => {
+          statusEl.textContent = `Status: Typing... (0%)`;
+        },
+        onTyping: (api) => {
+          statusEl.textContent = `Status: Typing... (${api.progress.percent})`;
+        },
+        onFinish: (api) => {
+          statusEl.textContent = `Status: Finished (100%)`;
+
+          setTimeout(() => {
+            i += 1;
+            if (i < tests.length) {
+              el.textContent = "";
+              typer.write(tests[i]);
+            } else {
+              el.innerHTML = "<b>All tests completed!</b>";
+            }
+          }, 1500);
+        },
+      });
+
+      typer.setVar("userName", "Rezz");
+      typer.setVar("dynamicHTML", "<span style='color:blue'>Blue Text</span>");
+
+      typer.setFn("ping", () => console.log("Pong! (Sync run executed)"));
+      typer.setFn("fetchData", async () => {
+        console.log("Fetching data... (Async started)");
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            console.log("Data fetched! (Async finished)");
+            resolve();
+          }, 1500);
+        });
+      });
+      typer.setFn("getGreeting", (timeOfDay) => `Good ${timeOfDay}!`);
+      typer.setFn("shoutFunc", (text) => `<b>${text.toUpperCase()}!!!</b>`);
+
+      typer.setFnAlias("shout", "shoutFunc", "eval");
+
+      const tests = [
+        "1. Basic typing. [@speed:150]Now typing very slowly.[@speed:25] Back to normal.",
+        "2. Testing HTML tags: <b>Bold</b>, <i>Italic</i>, and entities like &amp; &lt; &gt;.",
+        "3. Wait for it... [@delay:1500]Boom! That was a 1.5s delay.",
+        "4. Hello [@var:userName]! Here is some [@var:dynamicHTML] injected via variables.",
+        "5. Running sync function.[@run:ping] Now waiting for async function to finish.[@async:fetchData] Async done!",
+        "6. Evaluating a function with parameters: [@eval:getGreeting('Afternoon')]",
+        "7. Testing custom alias: [@shout:success]",
+      ];
+
+      document.querySelector("#btn-pause").addEventListener("click", () => typer.pause());
+      document.querySelector("#btn-resume").addEventListener("click", () => typer.resume());
+      document.querySelector("#btn-skip").addEventListener("click", () => typer.skip());
+      document.querySelector("#btn-destroy").addEventListener("click", () => {
+        typer.destroy(true);
+        statusEl.textContent = "Status: Destroyed";
+      });
+
+      let i = 0;
+      typer.write(tests[i]);
+    </script>
+  </body>
+</html>
